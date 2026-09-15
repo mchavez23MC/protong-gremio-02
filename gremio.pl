@@ -68,3 +68,32 @@ mismo_objeto(P1, P2, Obj):-
     inventario(P1, L1), inventario(P2, L2),
     member(Obj, L1), member(Obj, L2).
 
+
+ser(presente, tercera, singular, "es").
+ser(pasado, tercera, singular, "en").
+
+conjugar_accion(Verbo, Tiempo, Persona, Numero, C):- 
+(   Verbo = "ser" ->
+        ser(Tiempo, Persona, Numero, C)
+    ; C = Verbo).
+
+
+puede_aceptar(Personaje, Mision):-
+    personaje(Personaje, Nivel, _),
+    mision(Mision, _, Dificultad, _),
+    Nivel >= Dificultad.
+
+tiene_requerido(Personaje, Mision):-
+    inventario(Personaje, Inventario),
+    member(Mision, Inventario).
+
+fusionar_equipo(P1, P2, Equipo):-
+    inventario(P1, Inv1),
+    inventario(P2, Inv2),
+    append(Inv1, Inv2, Equipo).
+
+generar_reporte(Personaje, MisionId, Mensaje):-
+    puede_aceptar(Personaje, MisionId),
+    mision(MisionId, NombreMision, _, XP),
+    conjugar_accion("ser", presente, tercera, singular, Verbo),
+    atomic_list_concat([Personaje, " puede aceptar la misión ", NombreMision, " y ganará ", XP, " XP. ", Verbo, " un héroe valiente."], Mensaje).
